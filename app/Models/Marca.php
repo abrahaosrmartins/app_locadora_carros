@@ -10,6 +10,11 @@ class Marca extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nome',
+        'imagem'
+    ];
+
     /**
      * Creates relationship with Modelo`s model
      *
