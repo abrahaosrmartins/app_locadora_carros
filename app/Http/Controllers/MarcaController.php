@@ -13,16 +13,12 @@ class MarcaController extends Controller
     protected $marca;
 
     /**
-     * Show the form for creating a new resource.
      * Class constructor
      *
-     * @return \Illuminate\Http\Response
      * @param Marca $marca
      */
-    public function create()
     public function __construct(Marca $marca)
     {
-        //
         $this->marca = $marca;
     }
 
@@ -54,14 +50,9 @@ class MarcaController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Marca  $marca
-     * @return \Illuminate\Http\Response
      */
-    public function edit(Marca $marca)
     {
-        //
     }
 
     /**
