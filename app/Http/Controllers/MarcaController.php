@@ -8,34 +8,38 @@ use Illuminate\Http\Request;
 class MarcaController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * @var Marca $marca
      */
-    public function index()
-    {
-        //
-    }
+    protected $marca;
 
     /**
      * Show the form for creating a new resource.
+     * Class constructor
      *
      * @return \Illuminate\Http\Response
+     * @param Marca $marca
      */
     public function create()
+    public function __construct(Marca $marca)
     {
         //
+        $this->marca = $marca;
     }
 
     /**
      * Store a newly created resource in storage.
+     * Display a listing of the resource.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function store(Request $request)
+    public function index(): JsonResponse
     {
         //
+        $marcas = $this->marca->all();
+        return response()->json($marcas, 200);
     }
 
     /**
