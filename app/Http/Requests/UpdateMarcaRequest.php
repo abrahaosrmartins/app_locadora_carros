@@ -11,7 +11,7 @@ class UpdateMarcaRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
+    public function authorize(): bool
     {
         return true;
     }
@@ -21,11 +21,11 @@ class UpdateMarcaRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'nome' => 'sometimes|unique:marcas,nome,' . $this->route('marca'),
-            'imagem' => 'sometimes'
+            'imagem' => 'sometimes|file|max:64000|mimes:jpg,jpeg,bmp,png,pdf'
         ];
     }
 
