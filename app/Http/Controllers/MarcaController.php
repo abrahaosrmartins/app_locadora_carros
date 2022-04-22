@@ -35,7 +35,7 @@ class MarcaController extends Controller
      */
     public function index(): JsonResponse
     {
-        $marcas = $this->marca->all();
+        $marcas = $this->marca->with('modelos')->get();
         return response()->json($marcas, 200);
     }
 
@@ -72,7 +72,7 @@ class MarcaController extends Controller
      */
     public function show(int $id)
     {
-        $marca = $this->marca->find($id);
+        $marca = $this->marca->with('modelos')->find($id);
 
         if ($marca === null) {
             return response()->json(['erro' => 'Registro inexistente no banco de dados'], 404);
@@ -93,19 +93,18 @@ class MarcaController extends Controller
         if ($marca === null) {
             return response()->json(['erro' => 'Registro inexistente no banco de dados'], 404);
         }
-
+        // se na request houver uma nova imagem, deleta a antiga
         if($updateMarcaRequest->file('imagem')){
             Storage::disk('public')->delete($marca->imagem);
         }
 
-        // se na request houver uma nova imagem, deleta a antiga
         $data = [
             'nome' => $updateMarcaRequest->nome,
             'imagem' => $updateMarcaRequest->file('imagem')->store('imagens', 'public')
         ];
 
         $marca->update($data);
-
+        // TODO: Fix this update
         return response()->json($marca, 200);
     }
 
