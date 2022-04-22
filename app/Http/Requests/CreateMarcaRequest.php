@@ -25,7 +25,7 @@ class CreateMarcaRequest extends FormRequest
     {
         return [
             'nome' => 'required|unique:marcas',
-            'imagem' => 'required'
+            'imagem' => 'required|file|max:64000|mimes:jpg,jpeg,bmp,png,pdf'
         ];
     }
 

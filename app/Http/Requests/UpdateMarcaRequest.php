@@ -25,7 +25,7 @@ class UpdateMarcaRequest extends FormRequest
     {
         return [
             'nome' => 'sometimes|unique:marcas,nome,' . $this->route('marca'),
-            'imagem' => 'sometimes'
+            'imagem' => 'sometimes|file|max:64000|mimes:jpg,jpeg,bmp,png,pdf'
         ];
     }
 
