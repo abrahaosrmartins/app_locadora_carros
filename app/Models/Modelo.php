@@ -11,6 +11,16 @@ class Modelo extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nome',
+        'marca_id',
+        'imagem',
+        'numero_portas',
+        'lugares',
+        'air_bag',
+        'abs'
+    ];
+
     /**
      * Creates relationship with Marca`s model
      *
