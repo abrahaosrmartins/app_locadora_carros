@@ -80,28 +80,27 @@ class ModeloController extends Controller
     /**
      * Update the specified resource in storage.
      *
+     * @param UpdateModeloRequest $updateModeloRequest
+     * @param int $id
+     * @return JsonResponse
      */
-    public function update(UpdateModeloRequest $updateModeloRequest, int $id)
+    public function update(UpdateModeloRequest $updateModeloRequest, int $id): JsonResponse
     {
         $modelo = $this->modelo->find($id);
-        if($modelo === null){
+        if ($modelo === null) {
             return response()->json(['erro' => 'O registro não existe no banco de dados'], 404);
         }
 
-        if($updateModeloRequest->file('imagem')) {
+        if ($updateModeloRequest->file('imagem')) {
             Storage::disk('public')->delete($modelo->imagem);
+            $imagem = $updateModeloRequest->file('imagem');
+            $imagem_urn = $imagem->store('imagens/modelos', 'public');
         }
 
-        $data = [
-            'nome' => $updateModeloRequest->nome,
-            'imagem' => $updateModeloRequest->file('imagem')->store('imagens/modelos', 'public'),
-            'numero_portas' => $updateModeloRequest->numero_portas,
-            'lugares' => $updateModeloRequest->lugares,
-            'air_bag' => $updateModeloRequest->air_bag,
-            'abs' => $updateModeloRequest->abs,
-        ];
+        $modelo->fill($updateModeloRequest->all());
+        $updateModeloRequest->file('imagem') ? $modelo->imagem = $imagem_urn : '';
+        $modelo->save();
 
-        $modelo->update($data);
         return response()->json($modelo, 200);
     }
 
