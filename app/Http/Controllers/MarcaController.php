@@ -52,7 +52,7 @@ class MarcaController extends Controller
          * método espera, como parâmetro, o nome da pasta de destino, e o disco
          * no caso abaixo, vai ser saldo em storage/app/public/imagens/2XYz2opbjSt27PVge416HVKbyVcunKq4Q7nl5vRB.png
          */
-        $image_urn = $createMarcaRequest->file('imagem')->store('imagens', 'public');
+        $image_urn = $createMarcaRequest->file('imagem')->store('imagens/marcas', 'public');
 
         $data = [
             'nome' => $createMarcaRequest->nome,
@@ -96,15 +96,14 @@ class MarcaController extends Controller
         // se na request houver uma nova imagem, deleta a antiga
         if($updateMarcaRequest->file('imagem')){
             Storage::disk('public')->delete($marca->imagem);
+            $imagem = $updateMarcaRequest->file('imagem');
+            $imagem_urn = $imagem->store('imagens/marcas', 'public');
         }
 
-        $data = [
-            'nome' => $updateMarcaRequest->nome,
-            'imagem' => $updateMarcaRequest->file('imagem')->store('imagens', 'public')
-        ];
+        $marca->fill($updateMarcaRequest->all());
+        $updateMarcaRequest->file('imagem') ? $marca->imagem = $imagem_urn : '';
+        $marca->save();
 
-        $marca->update($data);
-        // TODO: Fix this update
         return response()->json($marca, 200);
     }
 
