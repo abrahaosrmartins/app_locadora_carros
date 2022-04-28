@@ -6,6 +6,7 @@ use App\Http\Requests\CreateModeloRequest;
 use App\Http\Requests\UpdateModeloRequest;
 use App\Models\Marca;
 use App\Models\Modelo;
+use App\Repositories\ModeloRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -39,31 +40,24 @@ class ModeloController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $modelos = array();
+        $modeloRepository = new ModeloRepository($this->modelo);
 
-        if ($request->has('atributos_marca')) {
-            $atributos_marca = $request->atributos_marca;
-            $modelos = $this->modelo->with('marca:id,' . $atributos_marca);
+        if($request->has('atributos_marca')) {
+            $atributos_marca = 'marca:id,'.$request->atributos_marca;
+            $modeloRepository->selectAtributosRegistrosRelacionados($atributos_marca);
         } else {
-            $modelos = $this->modelo->with('marca');
+            $modeloRepository->selectAtributosRegistrosRelacionados('marca');
         }
 
-        if ($request->has('filtro')) {
-            $filtros = explode(';', $request->filtro);
-            foreach ($filtros as $key => $filtro) {
-                $condicoes = explode(':', $filtro);
-                $modelos = $modelos->where($condicoes[0], $condicoes[1], $condicoes[2]);
-            }
+        if($request->has('filtro')) {
+            $modeloRepository->filtro($request->filtro);
         }
 
-        if ($request->has('atributos')) {
-            $atributos = $request->atributos;
-            $modelos = $modelos->selectRaw($atributos)->get();
-        } else {
-            $modelos = $modelos->get();
+        if($request->has('atributos')) {
+            $modeloRepository->selectAtributos($request->atributos);
         }
 
-        return response()->json($modelos, 200);
+        return response()->json($modeloRepository->getResultado(), 200);
         // all() -> cria um objeto de consulta e depois faz um get() retornando uma collection
         // get() -> possibilita modificar a consulta antes de retornar a collection
     }
