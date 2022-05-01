@@ -35,8 +35,13 @@ class AuthController extends Controller
         return 'refresh';
     }
 
-    public function me()
+    /**
+     * Returns Auth user
+     *
+     * @return JsonResponse
+     */
+    public function me(): JsonResponse
     {
-        return 'me';
+        return response()->json(auth()->user());
     }
 }
