@@ -25,4 +25,18 @@ class AuthController extends Controller
         }
     }
 
+    public function logout()
+    {
+        return 'logout';
+    }
+
+    public function refresh()
+    {
+        return 'refresh';
+    }
+
+    public function me()
+    {
+        return 'me';
+    }
 }
