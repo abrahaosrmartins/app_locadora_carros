@@ -13,7 +13,7 @@ class AuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         // método auth retorna o token de autorização
         $token = auth('api')->attempt($request->all(['email', 'password']));
