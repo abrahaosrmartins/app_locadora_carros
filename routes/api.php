@@ -18,7 +18,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['jwt.auth'])->group(function () {
+Route::prefix('v1')->middleware(['jwt.auth'])->group(function () {
     Route::apiResource('cliente', 'ClienteController');
     Route::apiResource('marca', 'MarcaController');
     Route::apiResource('modelo', 'ModeloController');
