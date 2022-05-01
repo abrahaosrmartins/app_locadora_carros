@@ -19,7 +19,7 @@ class AuthController extends Controller
         $token = auth('api')->attempt($request->all(['email', 'password']));
 
         if ($token) { // usuário autenticado com sucesso
-            return response()->json(['token' => $token], 200);
+            return response()->json(['token' => $token]);
         } else { // usuário ou senha inválidos
             return response()->json(['erro' => 'Usuário ou senha inválidos'], 403);
         }
