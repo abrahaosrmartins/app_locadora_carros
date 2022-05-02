@@ -18,8 +18,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('cliente', 'ClienteController');
-Route::apiResource('marca', 'MarcaController');
-Route::apiResource('modelo', 'ModeloController');
-Route::apiResource('carro', 'CarroController');
-Route::apiResource('locacao', 'LocacaoController');
+Route::prefix('v1')->middleware(['jwt.auth'])->group(function () {
+    Route::post('me', 'AuthController@me');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::post('logout', 'AuthController@logout');
+    Route::apiResource('cliente', 'ClienteController');
+    Route::apiResource('marca', 'MarcaController');
+    Route::apiResource('modelo', 'ModeloController');
+    Route::apiResource('carro', 'CarroController');
+    Route::apiResource('locacao', 'LocacaoController');
+});
+
+Route::post('login', 'AuthController@login');
