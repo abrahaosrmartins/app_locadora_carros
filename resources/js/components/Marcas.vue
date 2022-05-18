@@ -69,5 +69,43 @@
 </template>
 
 <script>
+export default {
+  data() {
+    return {
+      urlBase: 'http://localhost:8000/api/v1/marca',
+      nomeMarca: '',
+      arquivoImagem: []
+    }
+  },
+  methods: {
+    carregarImagem(e) {
+      this.arquivoImagem = e.target.files
+    },
+    salvar() {
+      console.log(this.nomeMarca, this.arquivoImagem)
 
+      // instanciando um formulário para definir os atributos
+      let formData = new FormData();
+      formData.append('nome', this.nomeMarca)
+      formData.append('imagem', this.arquivoImagem[0])
+
+      let config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json',
+          'Authorization': this.token
+        }
+      }
+
+      // axios = biblioteca que permite realizar as requisições http para o backend
+      axios.post(this.urlBase, formData, config)
+          .then(response => {
+            console.log(response)
+          })
+          .catch(errors => {
+            console.log(errors)
+          })
+    }
+  }
+}
 </script>
