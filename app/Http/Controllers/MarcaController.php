@@ -52,7 +52,7 @@ class MarcaController extends Controller
             $marcaRepository->selectAtributos($request->atributos);
         }
 
-        return response()->json($marcaRepository->getResultado(), 200);
+        return response()->json($marcaRepository->getResultadoPaginado(3), 200);
         // all() -> cria um objeto de consulta e depois faz um get() retornando uma collection
         // get() -> possibilita modificar a consulta antes de retornar a collection
     }
