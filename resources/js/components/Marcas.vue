@@ -34,7 +34,16 @@
                 <!-- início do card de listagem de marcas -->
                 <card-component titulo="Relação de Marcas">
                     <template v-slot:conteudo>
-                        <table-component></table-component>
+                        <table-component
+                            :dados="marcas"
+                            :titulos="{
+                                id: {titulo: 'ID', tipo: 'texto'},
+                                nome: {titulo: 'Nome', tipo: 'texto'},
+                                imagem: {titulo: 'Imagem', tipo: 'imagem'},
+                                created_at: {titulo: 'Data de criação', tipo: 'data'},
+                            }"
+                        >
+                        </table-component>
                     </template>
                     <template v-slot:rodape>
                         <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal"
@@ -97,10 +106,28 @@ export default {
             nomeMarca: '',
             arquivoImagem: [],
             transacaoStatus: '',
-            transacaoDetalhes: {}
+            transacaoDetalhes: {},
+            marcas: []
         }
     },
     methods: {
+        carregarLista() {
+            let config = {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': this.token
+                }
+            }
+
+            axios.get(this.urlBase, config)
+                .then(response => {
+                    this.marcas = response.data
+                    // console.log(this.marcas)
+                })
+                .catch(errors => {
+                    console.log(errors);
+                })
+        },
         carregarImagem(e) {
             this.arquivoImagem = e.target.files
         },
@@ -133,12 +160,15 @@ export default {
                 .catch(errors => {
                     this.transacaoStatus = 'erro'
                     this.transacaoDetalhes = {
-                        mensagem: errors.response.data.message
+                        mensagem: errors.response.data.message,
                         dados: errors.response.data.errors
                     }
                     // errors.response.data.message
                 })
         }
+    },
+    mounted() {
+        this.carregarLista()
     }
 }
 </script>
