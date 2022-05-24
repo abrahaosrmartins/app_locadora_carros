@@ -66,4 +66,13 @@ abstract class AbstractRepository
     public function getResultado() {
         return $this->model->get();
     }
+
+    /**
+     * Get query result
+     *
+     * @return mixed
+     */
+    public function getResultadoPaginado($numeroRegistrosPorPagina) {
+        return $this->model->paginate($numeroRegistrosPorPagina);
+    }
 }

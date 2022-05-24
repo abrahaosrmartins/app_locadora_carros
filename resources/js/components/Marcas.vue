@@ -34,19 +34,48 @@
                 <!-- início do card de listagem de marcas -->
                 <card-component titulo="Relação de Marcas">
                     <template v-slot:conteudo>
-                        <table-component></table-component>
+                        <table-component
+                            :dados="marcas.data"
+                            :titulos="{
+                                id: {titulo: 'ID', tipo: 'texto'},
+                                nome: {titulo: 'Nome', tipo: 'texto'},
+                                imagem: {titulo: 'Imagem', tipo: 'imagem'},
+                                created_at: {titulo: 'Data de criação', tipo: 'data'},
+                            }"
+                        >
+                        </table-component>
                     </template>
                     <template v-slot:rodape>
-                        <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal"
-                                data-target="#modalMarca">Adicionar
-                        </button>
+                        <div class="row">
+                            <div class="col-10">
+                                <paginate-component>
+                                    <li v-for="l, key in marcas.links" :key="key"
+                                        :class="l.active ? 'page-item active' : 'page-item'"
+                                        @click="paginacao(l)">
+                                        <a class="page-link" v-html="l.label"></a>
+                                    </li>
+                                </paginate-component>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" class="btn btn-primary btn-sm float-right" data-toggle="modal"
+                                        data-target="#modalMarca">Adicionar
+                                </button>
+                            </div>
+                        </div>
                     </template>
                 </card-component>
                 <!-- final do card de listagem de marcas -->
             </div>
         </div>
+
         <!-- Modal -->
         <modal-component id="modalMarca" titulo="Adicionar Marca">
+            <template v-slot:alertas>
+                <alert-component tipo="success" :detalhes="transacaoDetalhes" titulo="Marca registrada com sucesso"
+                                 v-if="transacaoStatus == 'adicionado'"></alert-component>
+                <alert-component tipo="danger" :detalhes="transacaoDetalhes" titulo="Erro ao tentar cadastrar a marca"
+                                 v-if="transacaoStatus == 'erro'"></alert-component>
+            </template>
             <template v-slot:conteudo>
                 <div class="form-group">
                     <input-container-component titulo="Nome da marca" id="novoNome" id-help="novoNomeHelp"
@@ -88,10 +117,36 @@ export default {
         return {
             urlBase: 'http://localhost:8000/api/v1/marca',
             nomeMarca: '',
-            arquivoImagem: []
+            arquivoImagem: [],
+            transacaoStatus: '',
+            transacaoDetalhes: {},
+            marcas: { data: []}
         }
     },
     methods: {
+        paginacao(l) {
+            if (l.url) {
+                this.urlBase = l.url // ajustando a url de consulta com o parâmetro de página
+                this.carregarLista() // requisitando novamente os dados para nossa API
+            }
+        },
+        carregarLista() {
+            let config = {
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': this.token
+                }
+            }
+
+            axios.get(this.urlBase, config)
+                .then(response => {
+                    this.marcas = response.data
+                    // console.log(this.marcas)
+                })
+                .catch(errors => {
+                    console.log(errors);
+                })
+        },
         carregarImagem(e) {
             this.arquivoImagem = e.target.files
         },
@@ -114,12 +169,25 @@ export default {
             // axios = biblioteca que permite realizar as requisições http para o backend
             axios.post(this.urlBase, formData, config)
                 .then(response => {
+                    this.transacaoStatus = 'adicionado'
+                    this.transacaoDetalhes = {
+                        mensagem: 'ID do registro: ' + response.data.id
+                    }
+
                     console.log(response)
                 })
                 .catch(errors => {
-                    console.log(errors)
+                    this.transacaoStatus = 'erro'
+                    this.transacaoDetalhes = {
+                        mensagem: errors.response.data.message,
+                        dados: errors.response.data.errors
+                    }
+                    // errors.response.data.message
                 })
         }
+    },
+    mounted() {
+        this.carregarLista()
     }
 }
 </script>
