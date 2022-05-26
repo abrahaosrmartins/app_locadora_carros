@@ -172,6 +172,11 @@
         <modal-component id="modalMarcaAtualizar" titulo="Atualizar marca">
 
             <template v-slot:alertas>
+                <alert-component tipo="success" titulo="Transação realizada com sucesso"
+                                 :detalhes="$store.state.transacao"
+                                 v-if="$store.state.transacao.status == 'sucesso'"></alert-component>
+                <alert-component tipo="danger" titulo="Erro na transação" :detalhes="$store.state.transacao"
+                                 v-if="$store.state.transacao.status == 'erro'"></alert-component>
             </template>
 
             <template v-slot:conteudo>
@@ -191,8 +196,6 @@
                                @change="carregarImagem($event)">
                     </input-container-component>
                 </div>
-
-                {{ $store.state.item }}
             </template>
 
             <template v-slot:rodape>
@@ -200,7 +203,7 @@
                 <button type="button" class="btn btn-primary" @click="atualizar()">Atualizar</button>
             </template>
         </modal-component>
-        <!-- fim do modal de inclusão de marca -->
+        <!-- fim do modal de atualização de marca -->
     </div>
 </template>
 
@@ -258,13 +261,17 @@ export default {
 
             axios.post(url, formData, config)
                 .then(response => {
-                    console.log('Atualizado', response)
+                    this.$store.state.transacao.status = 'sucesso'
+                    this.$store.state.transacao.mensagem = 'Registro de marca atualizado com sucesso!'
+
                     //limpar o campo de seleção de arquivos
                     atualizarImagem.value = ''
                     this.carregarLista()
                 })
                 .catch(errors => {
-                    console.log('Erro de atualização', errors.response)
+                    this.$store.state.transacao.status = 'erro'
+                    this.$store.state.transacao.mensagem = errors.response.data.message
+                    this.$store.state.transacao.dados = errors.response.data.errors
                 })
         },
         remover() {
