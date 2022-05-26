@@ -111,15 +111,16 @@ class MarcaController extends Controller
         if ($marca === null) {
             return response()->json(['erro' => 'Registro inexistente no banco de dados'], 404);
         }
+
+        $marca->fill($updateMarcaRequest->all());
+
         // se na request houver uma nova imagem, deleta a antiga
         if($updateMarcaRequest->file('imagem')){
             Storage::disk('public')->delete($marca->imagem);
             $imagem = $updateMarcaRequest->file('imagem');
             $imagem_urn = $imagem->store('imagens/marcas', 'public');
+            $marca->imagem = $imagem_urn;
         }
-
-        $marca->fill($updateMarcaRequest->all());
-        $updateMarcaRequest->file('imagem') ? $marca->imagem = $imagem_urn : '';
         $marca->save();
 
         return response()->json($marca, 200);
