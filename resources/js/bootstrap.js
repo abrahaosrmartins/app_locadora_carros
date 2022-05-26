@@ -51,3 +51,15 @@ axios.interceptors.request.use(
         return Promise.reject(error)
     }
 )
+
+/* interceptar os responses da requisição */
+axios.interceptors.response.use(
+    response => {
+        console.log(response)
+        return response
+    },
+    error => {
+        console.log(error)
+        return Promise.reject(error)
+    }
+)
